@@ -71,6 +71,7 @@ body{
     user-select: none;
     transition: min-height 0.3s ease;
     filter: drop-shadow(0 0 3px rgba(0, 0, 0,0.1));
+    margin-bottom: 5px;
 }
 
 .taskList{
@@ -81,7 +82,10 @@ body{
     font-family: "Inter", sans-serif;
     font-size: 13.33px;
     font-weight: 500;
-    width: fit-content;
+    max-width: 180px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow:hidden;
 }
 
 .groupTitle{
@@ -90,25 +94,6 @@ body{
     gap: 10px;
     height: 30px;
     cursor: pointer;
-}
-
-.addTaskBtn{
-    font-family: "Inter", sans-serif;
-    font-size: 20px;
-    width: 30px;
-    height: 30px;
-    border-radius: 5px;
-    color: #ececec;
-    background-color: #121212;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    cursor: pointer;
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    opacity: 0;
-    transition: 0.3s cubic-bezier(0.075, 0.82, 0.165, 1);
 }
 
 .addGroupBtn{
@@ -123,42 +108,37 @@ body{
     justify-content: center;
     align-items: center;
     cursor: pointer;
-    top: 10px;
-    right: 10px;
-    position: absolute;
     opacity: 1;
     transition: 0.3s cubic-bezier(0.075, 0.82, 0.165, 1);
     filter: drop-shadow(0 0 3px rgba(0, 0, 0,0.1));
 }
 
-.addGroupBtn:hover{
-    padding: 5px 5px;
-}
-
-.addTaskBtn:hover{
-    padding: 5px 5px;
-}
-
-.group:hover .addTaskBtn{
-    opacity: 1;
-}
-
-.group .task{
-    background-color: #F7F8F9;
+.addForm{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 200px;
+    padding: 15px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     border-radius: 5px;
-    font-family: "Inter", sans-serif;
-    font-size: 13.33px;
-    font-weight: 500;
-    margin: 10px 0 0 0;
-    padding: 10px;
-    overflow:hidden;
-    max-width: 197px;
-    margin-left: 10px;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    margin-bottom: 5px;
+    z-index: 1;
+    background-color: #F7F8F9;
+    color: #000000;
+    filter: drop-shadow(0 0 3px rgba(0, 0, 0,0.1));
 }
 
-.group .taskList:not(:last-child){
-    margin: 10px 0;
+.addGroupContainer{
+    
+    display: flex;
+    justify-content: space-between;
+}
+
+.addGroupContainer input[type="text"]{
+    width: 160px;
+    height: 20px;
+    filter: drop-shadow(0 0 3px rgba(0, 0, 0,0.1));
+    margin-bottom: 20px;
 }
