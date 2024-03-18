@@ -73,6 +73,7 @@ body{
     cursor: pointer;
     transition: 0.3s ease;
     margin-bottom: 10px;
+    filter: drop-shadow(0 0 3px rgba(0, 0, 0,0.1));
 }
 
 .board .box:hover{
