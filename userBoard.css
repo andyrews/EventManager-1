@@ -1,0 +1,47 @@
+h2{
+	font-family: "Inter", sans-serif;
+}
+
+.user-container{
+	margin-top: 70px;
+	display:flex;
+	height:100%;
+	width:100%;
+	margin-right:50px;
+	background-color: 	#f8f8ff;
+	border-radius:6px;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+	height:100%;
+	flex-direction:column;
+}
+
+.member-table {
+   font-family: "Inter", sans-serif;
+  border-spacing: 0 10px;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+.member-table  td, th {
+  text-align: left;
+  border:  1px solid #dddddd;
+  padding: 10px;
+}
+
+
+.member-table  tr:nth-child(even) {
+  background-color: #dddddd;
+}
+
+
+
+.add-btn{
+	font-family: "Inter", sans-serif;
+	border-radius: 8px;
+	background-color: black;
+	border: none;
+	color: white;
+	padding:1em;
+	cursor:pointer;
+	width:10em;
+}
