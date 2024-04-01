@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="/CSS/navStyle.css">
+    <link rel="stylesheet" href="/CSS/tableStyle.css">
+    <title>Event Manager | Table</title>
+</head>
+<body>
+    
+    <div class="navContainer">
+        <nav>
+            <div class="main">
+            </div>
+    
+            <ul>
+                <div class="block">
+                    <li>
+                        <i class="fa-solid fa-house fa-xl"></i>
+                        <p><a href="hub.html">Hub</a></p>
+                    </li>
+                    <li>
+                        <i class="fa-solid fa-layer-group fa-xl"></i>
+                        <p><a href="table.html">Table</a></p>
+                    </li>
+                    <li>
+                        <i class="fa-solid fa-border-all"></i>
+                        <p><a href="index.html">Board</a></p>
+                    </li>
+                </div>
+    
+                <li>
+                    <i class="fa-solid fa-gear"></i>
+                    <p>Settings</p>
+                </li>
+                
+            </ul>
+    
+            <div class="navBtn">
+                <i class="fa-solid fa-caret-right"></i>
+            </div>
+        </nav>
+    </div>
+
+    <div class="container">
+        <h5>Table view</h5>
+
+        <div class="searchBar">
+            <input type="text" id="search-bar-text" placeholder="" onkeyup="search()">
+            <i class="fa-solid fa-magnifying-glass"></i>
+        </div>
+
+        
+        <div class="tableContainer">
+            <div class="groupTask">
+                <p id="title">Groups</p>
+
+                <div class="addGroupContainer">
+                    <input id="groupTitleText" type="text">
+                    <div class="addGroupBtn">+</div>
+                </div>
+
+                <!-- <div class="group">
+                    <div class="groupTitle">
+                        <div class="addTaskBtn"><span>+</span></div>
+                        <i class="fa-solid fa-angle-right"></i>
+                        <p>UI/UX and another thing i want to do</p>
+                    </div>
+
+                    <div class="taskList">
+                        <div class="task">
+                            Find the correct font styles for the style and another thing
+                        </div>
+                        <div class="task">
+                            Design the user interface for client viewing
+                        </div>
+                    </div>
+                </div> -->
+            </div>
+
+            <div class="tableExtraContainer">
+            </div>
+            
+        </div>
+    </div>
+
+    <script src="/JS/navScript.js"></script>
+
+    <script type="module">
+        // Import the functions you need from the SDKs you need
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-app.js";
+        import { getDatabase, set, ref, push, onValue, onChildAdded, onChildChanged, onChildRemoved } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-database.js";
+    
+      
+        // Your web app's Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyB0JAbXEgYyHuLsBI1lZ_XCBnlZzfFcU08",
+            authDomain: "illuminata-eventmanager.firebaseapp.com",
+            databaseURL: "https://illuminata-eventmanager-default-rtdb.asia-southeast1.firebasedatabase.app/",
+            projectId: "illuminata-eventmanager",
+            storageBucket: "illuminata-eventmanager.appspot.com",
+            messagingSenderId: "397265559679",
+            appId: "1:397265559679:web:93d385aba41cb8e9495f4a"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        let groups = document.querySelectorAll(".group")
+        let tableContainer = document.querySelector(".tableExtraContainer")
+
+        let groupContainer = document.querySelector(".groupTask")
+        let groupTitle = document.querySelector("#groupTitleText") //This is for the title of the group
+        let addGroupBtn = document.querySelector(".addGroupBtn")
+
+        //This function is for when the user types in a title on the left tab
+        //and presses enter, adding a new group.
+        //Also creates a new table on the right hand side
+        addGroupBtn.addEventListener("click", function(){
+            let newGroupTitle = groupTitle.value;
+
+            if(newGroupTitle === ""){
+                return;
+            } else {
+                // Save groupTitle and newGroupTitle to Firebase Realtime Database
+                const groupRef = push(ref(db, 'groups'));
+                set(groupRef, {
+                    groupTitle: newGroupTitle
+                });
+
+                createGroupElement(newGroupTitle);
+                createTable(newGroupTitle);
+            }
+        })
+
+        
+        // Function to create a group element
+        function createGroupElement(newGroupTitle) {
+            let group = document.createElement("div");
+            group.classList = "group";
+
+            let groupTitleDiv = document.createElement("div");
+            groupTitleDiv.classList = "groupTitle";
+
+            let icon = document.createElement("i");
+            icon.classList = "fa-solid fa-angle-right";
+
+            let title = document.createElement("p");
+            title.innerHTML = newGroupTitle;
+            title.setAttribute("data-title", newGroupTitle); // Add data-title attribute
+
+            groupTitleDiv.appendChild(icon);
+            groupTitleDiv.appendChild(title);
+            
+            group.appendChild(groupTitleDiv);
+            
+            groupContainer.appendChild(group);
+        }
+
+        //This function is for updating the groups array
+        //When user adds a new group, the group array is updated
+        function updateGroupsArray(){
+            groups = document.querySelectorAll(".group")
+        }
+
+        //This function is used in the "addGroupBtn.addEventListener..."
+        //It's what helps add a new table on the right hand side
+        //When a user adds a new group
+        function createTable(tableTitle){
+            let table = document.createElement("div")
+            table.classList = "table"
+
+            let titleContainer = document.createElement("div")
+            titleContainer.classList = "titleContainer"
+            let title = document.createElement("p")
+            title.innerHTML = tableTitle
+
+            titleContainer.appendChild(title)
+            table.appendChild(titleContainer)
+
+            let contentTable = document.createElement("table")
+            contentTable.classList = "contentTable"
+
+            let tbody = document.createElement("tbody")
+            contentTable.appendChild(tbody)
+
+            table.appendChild(contentTable)
+
+            let createNewTask = document.createElement("div")
+            createNewTask.classList = "createNewTask"
+
+            let icon = document.createElement("i")
+            icon.classList = "fa-solid fa-plus"
+
+            let createTaskP = document.createElement("p")
+            createTaskP.innerHTML = "Create task"
+            
+            let newBox = document.createElement("div")
+            newBox.classList = "newBox"
+
+            //-- This handles adding a new row to the table
+            //This is for the "Create task" button in the (right-side) table view
+            createNewTask.addEventListener("click", function(){
+                //When user clicks on the "Create task button"
+                //It opens up the overlay with the input text field
+                if(createNewTask.classList != "active"){
+                    newBox.style.display = "block";
+                    createNewTask.classList.add("active")
+                }
+            })
+
+            //This is for the input text field that appears after clicking
+            //the "Create task" button.
+            newBox.addEventListener("keyup", function(event){
+                let textInput = newBox.querySelector("input").value;
+
+                //If the user clicks enter
+                if(event.keyCode == 13){
+                    if(textInput != ""){ //If the text field is not empty when user clicks enter
+                        // Get the group ID for the current group
+                        const groupId = document.querySelector('.groupTitle p').textContent;
+                        console.log(groupId);
+                        // Save the task to Firebase Realtime Database under the respective group title
+                        const taskRef = push(ref(db, `groups/${groupId}/tasks`));
+                        set(taskRef, {
+                            task: textInput,
+                            status: 'todo' // You can add additional fields as needed
+                        });
+
+                        // A new row is added 
+                        let row = document.createElement("tr")
+
+                        let taskTitle = document.createElement("td")
+                        taskTitle.classList = "taskTitle"
+                        taskTitle.innerHTML = textInput
+
+                        let taskProgress = document.createElement("td")
+                        taskProgress.classList = "taskProgress"
+
+                        let customSelect = document.createElement("div")
+                        customSelect.classList = "custom-select"
+
+                        let select = document.createElement("select")
+                        let optionOne = document.createElement("option")
+                        optionOne.value = "todo"
+                        optionOne.innerHTML = "TO DO"
+                        let optionTwo = document.createElement("option")
+                        optionTwo.value = "inprogress"
+                        optionTwo.innerHTML = "IN PROGRESS"
+                        let optionThree = document.createElement("option")
+                        optionThree.value = "done"
+                        optionThree.innerHTML = "DONE"
+
+                        select.appendChild(optionOne)
+                        select.appendChild(optionTwo)
+                        select.appendChild(optionThree)
+
+                        customSelect.appendChild(select)
+                        taskProgress.appendChild(customSelect)
+
+                        row.appendChild(taskTitle)
+                        row.appendChild(taskProgress)
+
+                        tbody.appendChild(row)
+
+                        // Clear the input field and hide the overlay
+                        newBox.querySelector("input").value = "";
+                        newBox.style.display = "none";
+                        createNewTask.classList.remove("active");
+                    }
+                }
+            })
+
+            //-- This handles adding a new row to the table
+
+            //This is for the overlay text input field
+            let input = document.createElement("input")
+            input.setAttribute("type", "text")
+            input.setAttribute("placeholder", "What is the task you want to add?")
+
+            newBox.appendChild(input)
+
+            createNewTask.appendChild(icon)
+            createNewTask.appendChild(createTaskP)
+            createNewTask.appendChild(newBox)
+
+            table.appendChild(createNewTask)
+            
+            //Lastly, all information about new row is added into the table container
+            tableContainer.appendChild(table)
+        }
+
+        
+        // Fetch group titles and tasks from Firebase when the page loads
+        window.onload = function() {
+            const groupsRef = ref(db, 'groups');
+            onValue(groupsRef, (snapshot) => {
+                const data = snapshot.val();
+                if (data) {
+                    Object.values(data).forEach(group => {
+                        // Check if the group title is defined
+                        if (group.groupTitle) {
+                            // Check if the group already exists
+                            const existingGroup = document.querySelector(`.group .groupTitle p[data-title="${group.groupTitle}"]`);
+                            if (!existingGroup) {
+                                // Create the group element only if it doesn't exist
+                                createGroupElement(group.groupTitle);
+                                createTable(group.groupTitle);
+                                fetchAndPopulateTasks(group.groupTitle);
+                                listenForTaskChanges(group.groupTitle);
+                            }
+                        }
+                    });
+                }
+            });
+        };
+
+        // Listen for changes in tasks and update the UI dynamically
+            function listenForTaskChanges(groupTitle) {
+            const tasksRef = ref(db, `groups/${groupTitle}/tasks`);
+            onChildAdded(tasksRef, (snapshot) => {
+                const task = snapshot.val();
+                if (task) {
+                // **New Addition:** Call appendTaskToTable to add the new task
+                appendTaskToTable(groupTitle, task);
+                }
+            });
+            }
+
+
+        /// Fetch and populate tasks for a specific group
+            function fetchAndPopulateTasks(groupTitle) {
+                const tasksRef = ref(db, `groups/${groupTitle}/tasks`);
+                onValue(tasksRef, (snapshot) => {
+                    const tasks = snapshot.val();
+                    console.log(tasksRef+"\n\n\n"+tasks);
+                    if (tasks) {
+                        Object.values(tasks).forEach(task => {
+                            appendTaskToTable(groupTitle, task);
+                        });
+                    }
+                });
+            }
+
+        /// Append a task to the table
+            function appendTaskToTable(groupTitle, task) {
+            const table = document.querySelector(`.table .titleContainer p[data-title="${groupTitle}"]`);
+            if (table) {
+                const tableContainer = table.closest('.table');
+                const tbody = tableContainer.querySelector('table tbody');
+                if (tbody) {
+                const row = document.createElement('tr');
+                const taskTitle = document.createElement('td');
+                taskTitle.classList = 'taskTitle';
+                taskTitle.textContent = task.task;
+                const taskProgress = document.createElement('td');
+                taskProgress.classList = 'taskProgress';
+                taskProgress.innerHTML = `
+                    <div class="custom-select">
+                    <select>
+                        <option value="todo">TO DO</option>
+                        <option value="inprogress">IN PROGRESS</option>
+                        <option value="done">DONE</option>
+                    </select>
+                    </div>
+                `;
+                row.appendChild(taskTitle);
+                row.appendChild(taskProgress);
+                tbody.appendChild(row);
+                }
+            }
+            }
+
+        function search(){
+            
+            let searchBox = document.getElementById("search-bar-text").value.toUpperCase();
+            let tables = document.querySelectorAll(".table")
+            
+
+            for(let i = 0; i < tables.length; i++){
+                const titleContainer = tables[i].querySelector(".titleContainer")
+                const title = titleContainer.querySelector("p")
+
+                if(title){
+                    const textValue = title.textContent.toUpperCase()
+
+                    if(textValue.indexOf(searchBox) > -1){
+                        tables[i].style.display = "";
+                    }else{
+                        tables[i].style.display = "none";
+                    }
+                }
+            }
+
+        }
+
+
+        </script>
+
+</body>
+</html>
